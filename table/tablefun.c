@@ -4,16 +4,16 @@ struct contact{
 };
 
 static void create(const xmlChar* value,FILE** fp){
-		int k;
-			k = atoi(value);
-			if(k==0 && value[0] != '0'){
-				printf("name: %s stored to Contacts.csv\n",value);
-				fprintf((*fp),"%s,",value);
-			}
-			else{
-				printf("mobileNumber: %s stored to Contacts.csv\n",value);
-				fprintf((*fp),"%s\n",value);
-			}
+	int k;
+	k = atoi(value);
+	if(k==0 && value[0] != '0'){
+		printf("name: %s stored to Contacts.csv\n",value);
+		fprintf((*fp),"%s,",value);
+	}
+	else{
+		printf("mobileNumber: %s stored to Contacts.csv\n",value);
+		fprintf((*fp),"%s\n",value);
+	}
 }
 
 
@@ -34,6 +34,7 @@ static void processNode(xmlTextReaderPtr reader,FILE **fp){
 		}
 	}
 }
+
 
 static void streamFile(const char *filename, struct contact **result,FILE **fp){
 	xmlTextReaderPtr reader;
