@@ -24,7 +24,7 @@ static void processNode(xmlTextReaderPtr reader,FILE **fp){
 
 	value = xmlTextReaderConstValue(reader);
 
-//	printf("depth:%d  nodetype:%d %s isempty:%d hasvalu:%d\n",xmlTextReaderDepth(reader),xmlTextReaderNodeType(reader),name,xmlTextReaderIsEmptyElement(reader),xmlTextReaderHasValue(reader));
+	printf("depth:%d  nodetype:%d %s isempty:%d hasvalu:%d\n",xmlTextReaderDepth(reader),xmlTextReaderNodeType(reader),name,xmlTextReaderIsEmptyElement(reader),xmlTextReaderHasValue(reader));
 	if(value == NULL)
 		printf("\n");
 	else{
