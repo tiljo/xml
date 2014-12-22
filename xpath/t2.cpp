@@ -1,5 +1,6 @@
 #include<iostream>
 #include<vector>
+#include<map>
 using namespace std;
 #include<stdio.h>
 #include<stdlib.h>
@@ -16,6 +17,7 @@ using namespace std;
 
 class xmlParse{
 	vector<xmlChar*> vec;
+	map<int,xmlChar*> xtable;
 
 	public:
 		void vectorpush(xmlChar* data){
@@ -23,11 +25,18 @@ class xmlParse{
 		}
 
 		virtual void onpath(void){
+			int i=0;
 			vector<xmlChar*>::iterator v = vec.begin();
 			while(v!=vec.end()){
 				cout<< "value is..="<< *v << endl;
+
+				xtable.insert(std::pair<int,xmlChar*>(i++,*v));
 				v++;
+
 			}
+			cout<<"xtable size is.."<<xtable.size()<<endl;
+			for (std::map<int,xmlChar*>::iterator it=xtable.begin(); it!=xtable.end(); ++it)
+				    std::cout << it->first << " => " << it->second << '\n';
 		}
 	};
 
