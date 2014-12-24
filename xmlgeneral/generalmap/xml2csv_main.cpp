@@ -23,7 +23,7 @@ int main(int argc, char** argv)
 
 	FILE *fp;
 	char *filename;
-	filename =(char*)"books.csv";
+	filename =(char*)"result.csv";
 	fp = fopen(filename,"w+");
 
 	xmlInitParser();
