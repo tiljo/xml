@@ -16,36 +16,45 @@ using namespace std;
 	defined(LIBXML_OUTPUT_ENABLED)
 
 class xmlParse{
+	vector<xmlChar*> vec;
 	map<int,xmlChar*> xtable;
 
 	public:
-		void tableinsert(const int i, xmlChar* data){
-			xtable.insert(std::pair<int,xmlChar*>(i,data));
+		void vectorpush(xmlChar* data){
+			vec.push_back(data);
 		}
 
 		virtual void onpath(void){
 			int i=0;
+			vector<xmlChar*>::iterator v = vec.begin();
+			while(v!=vec.end()){
+				//cout<< "value is..="<< *v << endl;
+
+				xtable.insert(std::pair<int,xmlChar*>(i++,*v));
+				v++;
+
+			}
 			cout<<"xtable size is.."<<xtable.size()<<endl;
 			for (std::map<int,xmlChar*>::iterator it=xtable.begin(); it!=xtable.end(); ++it)
 				    std::cout << it->first << " => " << it->second << '\n';
 		}
-};
+	};
 
 static void usage(const char *name);
-void store_xpath_nodes(xmlNodeSetPtr nodes,xmlParse& abc);
-static int parser(const char *filename, const xmlChar *xpathExpr,xmlParse& abc);
+void store_xpath_nodes(xmlNodeSetPtr nodes);
+static int parser(const char *filename, const xmlChar *xpathExpr);
 
 static void usage(const char* name){
 	assert(name);
 	fprintf(stderr, "Usage : %s <xml-file>  <xpath-expr> \n",name);
 }
 
-void store_xpath_nodes(xmlNodeSetPtr nodes,xmlParse& abc)
+void store_xpath_nodes(xmlNodeSetPtr nodes)
 {
 	xmlNodePtr cur;
 	int size;
 	int i;
-
+	xmlParse abc;
 
 	size = (nodes)? nodes->nodeNr : 0;
 
@@ -55,11 +64,11 @@ void store_xpath_nodes(xmlNodeSetPtr nodes,xmlParse& abc)
 		if(nodes->nodeTab[i]->type == XML_ELEMENT_NODE){
 			cur = nodes->nodeTab[i];
 			fprintf(stdout,"element is = \"%s\"\n",cur->name);
-			xmlChar* data = xmlNodeGetContent(cur);
-			abc.tableinsert(i,data);
+
+			abc.vectorpush(xmlNodeGetContent(cur));//pushing the element value into vector
 
 			if(xmlIsBlankNode(cur->children)){//check for elment node
-				printf("This  element node contains children ......\n\n");
+				printf("This is element node........\n");
 			}
 
 		} 
@@ -68,11 +77,12 @@ void store_xpath_nodes(xmlNodeSetPtr nodes,xmlParse& abc)
 			fprintf(stdout, "= node\"%s\" : type %d\n",cur->name,cur->type);		
 		}
 	}
+			abc.onpath();//print the entire datas in the node
 }
 
 
 
-static int parser(const char *filename, const xmlChar *xpathExpr,xmlParse& abc)
+static int parser(const char *filename, const xmlChar *xpathExpr)
 {
 	xmlDocPtr doc;
 	xmlXPathContextPtr xpathCtx;
@@ -94,7 +104,7 @@ static int parser(const char *filename, const xmlChar *xpathExpr,xmlParse& abc)
 		return(-1);
 	}
 
-	xpathObj = xmlXPathEvalExpression(xpathExpr,xpathCtx);
+	xpathObj = xmlXPathEvalExpression(xpathExpr,xpathCtx);//evaluating the xpath
 	if(xpathObj == NULL){
 		fprintf(stderr,"error: unable to evaluate xpath expression \"%s\"\n",xpathExpr);
 		xmlXPathFreeContext(xpathCtx);
@@ -102,7 +112,7 @@ static int parser(const char *filename, const xmlChar *xpathExpr,xmlParse& abc)
 		return(-1);
 	}
 
-	store_xpath_nodes(xpathObj->nodesetval,abc);
+	store_xpath_nodes(xpathObj->nodesetval);
 
 	xmlXPathFreeContext(xpathCtx);
 	xmlFreeDoc(doc);
@@ -119,15 +129,10 @@ int main(int argc, char** argv)
 	xmlInitParser();
 	LIBXML_TEST_VERSION
 
-	xmlParse abc;
-
-	if(parser(argv[1], BAD_CAST argv[2],abc)<0){
+	if(parser(argv[1], BAD_CAST argv[2])<0){
 		printf("error...\n");
 		return(-1);
 	}
-
-	abc.onpath();
-
 	xmlCleanupParser();
 	xmlMemoryDump();
 	return 0;
