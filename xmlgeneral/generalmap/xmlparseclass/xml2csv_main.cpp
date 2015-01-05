@@ -1,6 +1,6 @@
 #include"xml2csv.h"
 #include"xml2csv_fun.cpp"
-
+//#include"nm.cpp"
 #if defined(LIBXML_XPATH_ENABLED) && defined(LIBXML_SAX1_ENABLED)&& \
 	defined(LIBXML_OUTPUT_ENABLED) && defined(LIBXML_TREE_ENABLED)
 
@@ -17,8 +17,6 @@ int main(int argc, char** argv)
 	int i,size;
 	xmlDoc *doc = NULL;
 	xmlNode *root_element = NULL;
-	//xmlChar *xmlbuff;
-	//int buffersize;
 	vector<xmlChar*> leaves;
 
 	FILE *fp;
@@ -33,15 +31,14 @@ int main(int argc, char** argv)
 		printf("could not parse file\n");
 		return (-1);
 	}
-	//xmlDocDumpFormatMemory(doc, &xmlbuff, &buffersize,1);
-//	xmlFree(xmlbuff);
 	root_element = xmlDocGetRootElement(doc);
 
 	find_elements(root_element,leaves);//find  leaf nodes and store to vector leaves
 
-	leaves.pop_back();//removing repeated node name
+//	leaves.pop_back();//removing repeated node name
 
 	size =leaves.size();//no.of leaf
+	cout<<">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"<<size<<leaves[0] <<endl;
 
 	create_table(leaves,&fp);//create table with leaf node name
 

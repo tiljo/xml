@@ -21,7 +21,7 @@ xmlChar* xmlParse::get_element(int key){
 
 
 
-static void find_elements(xmlNode* a_node, vector<xmlChar*>& leaves)//find leaf nodes
+/*static void find_elements(xmlNode* a_node, vector<xmlChar*>& leaves)//find leaf nodes
 {
 	xmlNode* current = NULL;
 	xmlChar * temp = NULL;
@@ -29,8 +29,8 @@ static void find_elements(xmlNode* a_node, vector<xmlChar*>& leaves)//find leaf 
 
 	for(current = a_node; current; current = current->next){
 		if((current->type == XML_TEXT_NODE) && !(xmlIsBlankNode(current))){
+			cout<<"aaaaaaaaaaaaaaaaaaaaaaaa"<<xmlStrlen((xmlChar*)current->parent->name)<<endl;
 			temp = (xmlChar*)current->parent->name;
-			cout<<";;;;;;;;;;;;;;;;;;;;"<<endl;
 			leaves.push_back(temp);
 		}
 		if((leaves.size())<2)
@@ -40,7 +40,40 @@ static void find_elements(xmlNode* a_node, vector<xmlChar*>& leaves)//find leaf 
 		else return;
 	}
 	
+}*/
+static void find_elements(xmlNode* a_node, vector<xmlChar*>& leaves)//find leaf nodes
+{
+	xmlNode* current = NULL;
+	xmlChar * temp = NULL;
+	int tempsize = 0;
+
+
+	for(current = a_node; current; current = current->next){
+			cout<<"++++++++++++++++++"<<tempsize<<endl;	
+
+		if((current->type == XML_TEXT_NODE) && !(xmlIsBlankNode(current))){
+			cout<<"++++++++++++++++++"<<tempsize<<endl;	
+			tempsize = xmlStrlen((xmlChar*)current->parent->name);
+			temp = (xmlChar*)calloc(tempsize+3,sizeof(xmlChar));
+			xmlStrcat(temp,(xmlChar*)"//");
+			xmlStrcat(temp,(xmlChar*)current->parent->name);
+			cout<<temp<<endl;
+
+				leaves.push_back(temp);
+		}
+		if((leaves.size())<2){
+				leaves.push_back(temp);
+				//free(temp);
+				find_elements(current->children, leaves);
+		}else if(!(xmlStrEqual(leaves.back(),leaves[0]))){
+				leaves.push_back(temp);
+				//free(temp);
+				find_elements(current->children, leaves);
+		}else return;
+	}
+	
 }
+
 
 static void usage(const char* name){
 	assert(name);
@@ -117,17 +150,20 @@ static int parser(const char *filename, const xmlChar *xpathExpr,xmlParse& abc)
 
 
 void create_table(vector<xmlChar*>& leaves,FILE** fp){//title names are stored in csv file
-
-	vector< xmlChar*>::iterator v = leaves.begin();
+	
+/*	vector< xmlChar*>::iterator v = leaves.begin();
 	while(v!=leaves.end()){
 		cout<<"table contains column..."<< *v<<endl;
+
+		cout<<"ffffffffffff"<<endl;
 		if (v	== leaves.begin())
 			fprintf(*fp,"%s",*v);
 		else
 			fprintf(*fp,",%s",*v);
 		v++;
+
 	}
-	fprintf(*fp,"\n");
+	fprintf(*fp,"\n");*/
 }
 
 
@@ -149,21 +185,24 @@ void write_table(xmlParse* myclasses, FILE **fp,int size){//elements are wrote u
 int evaluate_leaves(xmlParse *myclasses, vector<xmlChar*>& leaves, char *argv)//xml file is evaluated and stores into maps
 {
 	int i,size,tempsize = 0;
-	xmlChar* temp = NULL;
+//	xmlChar* temp = NULL;
 	size = leaves.size();
+	cout<<"size..................\"" <<leaves[0]<<endl;
 
 	for(i = 0; i < size ; i++){
-		tempsize = xmlStrlen(leaves[i]);
+		/*tempsize = xmlStrlen(leaves[i]);
+		cout<<"bbbbbbbbbbbbbbbbbbbb"<<tempsize<<endl;
 		temp = (xmlChar*)calloc(tempsize+3,sizeof(xmlChar));
 		xmlStrcat(temp,(xmlChar*)"//");
 		xmlStrcat(temp,leaves[i]);
-		cout<<"searching for xpath="<<temp<<endl;
+		cout<<"searching for xpath="<<temp<<endl;*/
+		cout<<",.............."<<leaves[i]<<endl;
 
-		if(parser(argv, BAD_CAST temp,myclasses[i])<0){
+		if(parser(argv, BAD_CAST leaves[i],myclasses[i])<0){
 			printf("error..on parser\n");
 			return(-1);
 		}
-		free(temp);
+		//free(temp);
 	}
 	return 0;
 }
